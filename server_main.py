@@ -34,7 +34,7 @@ if __name__ == "__main__":
 
     # 添加參數
     parser.add_argument('--ip', type=str, help='server ip', default="127.0.0.1")
-    parser.add_argument('--port', type=int, help='server port', default=14550)
+    parser.add_argument('--port', type=int, help='server port', default=14551)
 
     args = parser.parse_args()
 
