@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 from matplotlib.font_manager import FontProperties
 import matplotlib as mpl
 # 服務器的地址和端口
-server_address = ('localhost', 12345)
+server_address = ('localhost', 14551)
 # 創建一個UDP socket
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 sock.settimeout(2.0)  # 設置超時時間，確保如果數據丟失，不會永遠等待
