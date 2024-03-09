@@ -58,7 +58,12 @@ class Client:
             self.udp.close()
     
     def write_data(self):
-        self.file_name = f'rtt_data_{self.nums}.csv'
+        
+        # 若 path result/ 不存在
+        if not os.path.exists("result"):
+            os.mkdir("result")
+
+        self.file_name = f'result/rtt_data_{self.nums}.csv'
         print(f"正在寫入 {self.file_name} ...")
 
         # 將RTT數據保存到CSV檔案，增加了描述性欄位
@@ -111,7 +116,7 @@ class Client:
         plt.legend()
         plt.grid(True)
         plt.text(10, average_rtt, f'一秒內可以往返的封包數: {packets_in_one_second}', fontsize=9)
-        plt.savefig('rtt_analysis.png')  # 保存圖表為圖片
+        plt.savefig(f'result/rtt_analysis_{self.nums}.png')  # 保存圖表為圖片
         plt.show()
 
         print(f"平均往返時間: {average_rtt:.2f} ms")
@@ -123,6 +128,7 @@ if __name__ == "__main__":
     parser.add_argument('--ip', type=str, help='server ip', default="127.0.0.1")
     parser.add_argument('--port', type=int, help='server port', default=12345)
     parser.add_argument('--tout', type=float, help='等待時間', default=2.0)
+    parser.add_argument('--nums', type=int, help='測試筆數', default=200)
 
     args = parser.parse_args()
 
@@ -130,7 +136,7 @@ if __name__ == "__main__":
                     server_port=args.port, 
                     timeout=args.tout)
     # 傳送資料
-    client.send_data(nums=20000)
+    client.send_data(nums=args.nums)
 
     # 寫入csv file
     client.write_data()
