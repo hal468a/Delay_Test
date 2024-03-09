@@ -58,7 +58,7 @@ class Client:
             self.udp.close()
     
     def write_data(self):
-        
+
         # 若 path result/ 不存在
         if not os.path.exists("result"):
             os.mkdir("result")
@@ -126,7 +126,7 @@ if __name__ == "__main__":
 
     # 添加參數
     parser.add_argument('--ip', type=str, help='server ip', default="127.0.0.1")
-    parser.add_argument('--port', type=int, help='server port', default=12345)
+    parser.add_argument('--port', type=int, help='server port', default=14551)
     parser.add_argument('--tout', type=float, help='等待時間', default=2.0)
     parser.add_argument('--nums', type=int, help='測試筆數', default=200)
 
