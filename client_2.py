@@ -151,7 +151,7 @@ class Client:
 
         # 計算平均RTT
         average_rtt = data['RTT (ms)'].mean()
-        print(f'平均RTT: {average_rtt:.3f} ms')
+        # print(f'平均RTT: {average_rtt:.3f} ms')
 
         # 初始化變量
         total_time_ms = 0
@@ -181,16 +181,18 @@ class Client:
         plt.figure(figsize=(10, 6))
         plt.plot(data['Test Number'], data['RTT (ms)'], label='RTT (ms)', marker='o')
         plt.axhline(average_rtt, color='r', linestyle='--', label=f'平均RTT: {average_rtt:.2f} ms')
-        plt.title('UDP 往返時間分析')
+
+        plt.title(f'一秒鐘內可以往返的封包數量: {packets_in_one_second}')
         plt.xlabel('測試編號')
         plt.ylabel('往返時間 (ms)')
         plt.legend()
         plt.grid(True)
-        plt.text(10, average_rtt, f'一秒內可以往返的封包數: {packets_in_one_second}', fontsize=9)
+
+        plt.text(10, average_rtt, f'平均延遲: {average_rtt:.3f}', fontsize=10)
         plt.savefig(f'result/rtt_analysis_{self.nums}.png')  # 保存圖表為圖片
         plt.show()
 
-        print(f"平均往返時間: {average_rtt:.2f} ms")
+        # print(f"平均往返時間: {average_rtt:.2f} ms")
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()

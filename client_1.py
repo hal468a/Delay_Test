@@ -144,6 +144,20 @@ data = pd.read_csv('rtt_data.csv')
 average_rtt = data['RTT (ms)'].mean()
 print(f'平均RTT: {average_rtt:.3f} ms')
 
+# 初始化變量
+total_time_ms = 0
+packets_in_one_second = 0
+
+# 遍歷每次測試的往返時間
+for rtt in rtt_data:
+    # 累計往返時間
+    total_time_ms += rtt[1]
+    # 檢查累計時間是否已經超過一秒（1000毫秒）
+    if total_time_ms > 1000:
+        break
+    packets_in_one_second += 1
+print(f"一秒鐘內可以往返的封包數量: {packets_in_one_second}")
+
 # 繪製RTT圖表
 # 獲取專案資料夾路徑
 project_folder = os.path.dirname(os.path.abspath(__file__))
@@ -155,11 +169,13 @@ mpl.rcParams['axes.unicode_minus'] = False
 
 plt.figure(figsize=(10, 6))
 plt.plot(data['封包序列號'], data['RTT (ms)'], label='RTT (ms)', marker='o')
+plt.axhline(average_rtt, color='r', linestyle='--', label=f'平均RTT: {average_rtt:.2f} ms')
 plt.xlabel('封包序列號')
 plt.ylabel('RTT (毫秒)')
-plt.title('UDP 往返時間 (RTT)')
+plt.title('控制指令平均延遲分析')
 plt.legend()
 plt.grid(True)
+# plt.text(10, average_rtt, f'平均延遲: {average_rtt:.3f}', fontsize=9)
 # 在保存前設置中文支持
 plt.savefig('rtt_chart.png', dpi=300)  # 保存圖表為PNG檔案
 plt.show()
