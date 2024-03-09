@@ -19,7 +19,7 @@ class Server:
                 data, address = self.udp.recvfrom(4096)
 
                 print(f'收到 {len(data)} 位元組自 {address}')
-                print(data)
+                # print(data)
 
                 if data:
                     sent = self.udp.sendto(data, address)

@@ -1,11 +1,17 @@
+import json
 import os
 import socket
+import sys
 import time
 import csv
 import pandas as pd
 import matplotlib.pyplot as plt
 from matplotlib.font_manager import FontProperties
 import matplotlib as mpl
+import struct
+import subprocess
+
+
 # 服務器的地址和端口
 server_address = ('localhost', 14551)
 # 創建一個UDP socket
@@ -19,16 +25,96 @@ try:
     for i in range(200):
         # 發送消息，附加序列號
         message = f'msg{i}'.encode()
+        ##############################
+        # 定義資料結構
+        data_format = "63s 63s i i d d d"
+        size = struct.calcsize(data_format)
+        # print(f"Size of the data format: {size} bytes")
+        source = "uav_0"
+        destination = f'msg{i}'
+        unix_time = 9999
+        nanoseconds = -9999
+        latitude = 14.22222
+        longitude = 14.22222
+        altitude = 9999
+        data = {
+            "Drone_name": "uav01",  # fack
+            "Roll_Axis": "uav01",
+            "Pitch_Axis": "uav01",
+            "Yaw_Axis": "uav01",
+            "Uav_state": "uav01",
+            "battery_serial_number": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "battery_voltage": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "battery_level": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "GPS_signal": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "Longitude": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "Latitude": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "Height": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "Vertical_Speed": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "Horizontal Speed": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "Ground_Speed": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "Flight_duration": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",  # fack
+            "Signal_5G": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",  # fack
+            "Avoidance": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",  # 待確認 Avoidance
+            "Mission_name": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",  # 先用mission_mode替代
+            "Mission_status": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "Pilot": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",  # fack
+            "Power": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "Mission_end_position": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "Power1": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "Power2": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "Power3": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "Power4": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "Power5": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "Power6": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "Power7": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "Power8": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "Power9": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "Power10": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        }
+        json_data = json.dumps(data)
+        # print("source", source)
+        # print("destination", destination)
+        # print("unix_time", unix_time)
+        # print("nanoseconds", nanoseconds)
+        # print("latitude", latitude)
+        # print("longitude", longitude)
+        # print("altitude", altitude)
+        # print(json.dumps(data, indent=2, ensure_ascii=False))
+        # 將 JSON 資料填充至 32 字節
+        json_data_padded = json_data.encode("utf-8")
+        # 打包資料
+        packed_data = struct.pack(data_format, source.encode("utf-8"), destination.encode("utf-8"), unix_time,
+                                  nanoseconds, latitude, longitude, altitude)
+        send_data = packed_data + json_data_padded
+        print(f"send_data_size: {sys.getsizeof(send_data)} bit")
+        ##############################
         send_time = time.time()
         try:
-            sock.sendto(message, server_address)
+            #sock.sendto(message, server_address)
+            sock.sendto(send_data, server_address)
 
             # 等待回應
             while True:
                 data, server = sock.recvfrom(4096)
                 receive_time = time.time()
+                data_format = "63s 63s i i d d d"  # 定義收到的struct有多少bytes
+                # 查看data_format_size
+                #print(f"data_format_size: {struct.calcsize(data_format)} bytes")
+                #print(f"63s_size: ", struct.calcsize("63s"), "bytes")
+                #print(f"i: ", struct.calcsize("i"), "bytes")
+                #print(f"d: ", struct.calcsize("d"), "bytes")
+                # 解包
+                size = struct.calcsize(data_format)
+                unpacked_data = struct.unpack(data_format, data[:size])
+                # 解析並打印解包後的資料
+                source, destination, unix_time, nanoseconds, latitude, longitude, altitude = unpacked_data
+                source = source.rstrip(b'\0').decode('utf-8')  # 刪除字串結尾的空字節
+                destination = destination.rstrip(b'\0').decode('utf-8')  # 刪除字串結尾的空字節
                 # 檢查回應的消息是否匹配
-                if data.decode() == f'msg{i}':
+                #print(destination)
+                if destination == f'msg{i}':
+                    # print("符合")
                     break
         except socket.timeout:
             print(f'消息 {i} 超時，未收到回應')
@@ -37,7 +123,8 @@ try:
         # 計算往返時間並保存
         rtt = (receive_time - send_time) * 1000  # 轉換為毫秒
         rtt_data.append((i, rtt))
-        print(f"接收到匹配的回應: {data.decode()}，RTT: {rtt:.3f} ms")
+        #print(f"接收到匹配的回應: {data.decode()}，RTT: {rtt:.3f} ms")
+        print(f"接收到匹配的回應: {destination}，RTT: {rtt:.3f} ms")
 
 finally:
     print('關閉socket')

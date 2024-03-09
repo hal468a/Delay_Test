@@ -1,7 +1,10 @@
 import os
 import csv
+import sys
 import time
+import json
 import socket
+import struct
 import argparse
 import pandas as pd
 import matplotlib as mpl
@@ -22,26 +25,94 @@ class Client:
         # 用於保存往返時間及其對應序列號的列表
         self.rtt_data = []
 
+        # 定義資料結構
+        self.data_format = "63s 63s i i d d d"
+        self.size = struct.calcsize(self.data_format)
+        self.source = "uav_0".encode("utf-8")
+        self.unix_time = 9999
+        self.nanoseconds = -9999
+        self.latitude = 14.22222
+        self.longitude = 14.22222
+        self.altitude = 9999
+
+        # json Data
+        self.data = {
+            "Drone_name": "uav01",  # fack
+            "Roll_Axis": "uav01",
+            "Pitch_Axis": "uav01",
+            "Yaw_Axis": "uav01",
+            "Uav_state": "uav01",
+            "battery_serial_number": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "battery_voltage": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "battery_level": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "GPS_signal": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "Longitude": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "Latitude": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "Height": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "Vertical_Speed": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "Horizontal Speed": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "Ground_Speed": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "Flight_duration": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",  # fack
+            "Signal_5G": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",  # fack
+            "Avoidance": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",  # 待確認 Avoidance
+            "Mission_name": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",  # 先用mission_mode替代
+            "Mission_status": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "Pilot": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",  # fack
+            "Power": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "Mission_end_position": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "Power1": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "Power2": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "Power3": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "Power4": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "Power5": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "Power6": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "Power7": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "Power8": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "Power9": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "Power10": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        }
+
+
     def send_data(self, nums:int):
         '''
         nums: 要傳送幾筆資料
         '''
         self.nums = nums
+        
         try:
             for i in tqdm(range(self.nums), desc="進行測試"):
                 # 發送消息，附加序列號
-                message = f'msg{i}'.encode()
+                message = f'msg{i}'.encode("utf-8")
+                json_bytes = json.dumps(self.data).encode("utf-8")
+
+                packed_data = struct.pack(self.data_format, 
+                                           self.source,
+                                           message,
+                                           self.unix_time,
+                                           self.nanoseconds,
+                                           self.latitude,
+                                           self.longitude,
+                                           self.altitude)
+                send_data = packed_data + json_bytes
+                # print(f"send_data_size: {sys.getsizeof(send_data)} bit")
                 send_time = time.time()
                 try:
-                    self.udp.sendto(message, self.serverAdd)
+                    self.udp.sendto(send_data, self.serverAdd)
 
                     # 等待回應
                     while True:
                         data, server = self.udp.recvfrom(4096)
                         receive_time = time.time()
 
+                        # 解包
+                        unpacked_data = struct.unpack(self.data_format, data[:self.size])
+                        # 解析並打印解包後的資料
+                        source, message, unix_time, nanoseconds, latitude, longitude, altitude = unpacked_data
+                        source = source.rstrip(b'\0').decode('utf-8')  # 刪除字串結尾的空字節
+                        message = message.rstrip(b'\0').decode('utf-8')  # 刪除字串結尾的空字節
+
                         # 檢查回應的消息是否匹配
-                        if data.decode() == f'msg{i}':
+                        if message == f'msg{i}':
                             break
 
                 except socket.timeout:
