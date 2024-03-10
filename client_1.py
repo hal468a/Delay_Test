@@ -116,6 +116,7 @@ try:
                 if destination == f'msg{i}':
                     # print("符合")
                     break
+                time.sleep(0.5)
         except socket.timeout:
             print(f'消息 {i} 超時，未收到回應')
             continue
