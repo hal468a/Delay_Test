@@ -174,8 +174,8 @@ plt.axhline(average_rtt, color='r', linestyle='--', label=f'平均RTT: {average_
 
 plt.xlabel('封包序列號')
 plt.ylabel('RTT (毫秒)')
-# plt.title('控制指令平均延遲分析')
-plt.title(f'一秒鐘內可以往返的封包數量: {packets_in_one_second}')
+plt.title('控制指令平均延遲分析')
+# plt.title(f'一秒鐘內可以往返的封包數量: {packets_in_one_second}')
 plt.legend()
 plt.grid(True)
 plt.text(10, average_rtt, f'平均延遲: {average_rtt:.3f}', fontsize=9)
