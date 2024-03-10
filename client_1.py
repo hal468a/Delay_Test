@@ -170,12 +170,14 @@ mpl.rcParams['axes.unicode_minus'] = False
 plt.figure(figsize=(10, 6))
 plt.plot(data['封包序列號'], data['RTT (ms)'], label='RTT (ms)', marker='o')
 plt.axhline(average_rtt, color='r', linestyle='--', label=f'平均RTT: {average_rtt:.2f} ms')
+
 plt.xlabel('封包序列號')
 plt.ylabel('RTT (毫秒)')
-plt.title('控制指令平均延遲分析')
+# plt.title('控制指令平均延遲分析')
+plt.title(f'一秒鐘內可以往返的封包數量: {packets_in_one_second}')
 plt.legend()
 plt.grid(True)
-# plt.text(10, average_rtt, f'平均延遲: {average_rtt:.3f}', fontsize=9)
+plt.text(10, average_rtt, f'平均延遲: {average_rtt:.3f}', fontsize=9)
 # 在保存前設置中文支持
 plt.savefig('rtt_chart.png', dpi=300)  # 保存圖表為PNG檔案
 plt.show()
