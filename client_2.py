@@ -114,6 +114,7 @@ class Client:
                         # 檢查回應的消息是否匹配
                         if message == f'msg{i}':
                             break
+                        time.sleep(0.5)
 
                 except socket.timeout:
                     print(f'消息 {i} 超時，未收到回應')
