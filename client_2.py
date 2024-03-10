@@ -181,7 +181,7 @@ class Client:
         # 繪製圖表並標註一秒內可以往返的封包數量
         plt.figure(figsize=(10, 6))
         plt.plot(data['Test Number'], data['RTT (ms)'], label='RTT (ms)', marker='o')
-        plt.axhline(average_rtt, color='r', linestyle='--', label=f'平均RTT: {average_rtt:.2f} ms')
+        # plt.axhline(average_rtt, color='r', linestyle='--', label=f'平均RTT: {average_rtt:.2f} ms')
 
         plt.title(f'一秒鐘內可以往返的封包數量: {packets_in_one_second}')
         plt.xlabel('測試編號')
@@ -189,36 +189,29 @@ class Client:
         plt.legend()
         plt.grid(True)
 
-        plt.text(10, average_rtt, f'平均延遲: {average_rtt:.3f}', fontsize=10)
+        # plt.text(10, average_rtt, f'平均延遲: {average_rtt:.3f}', fontsize=10)
         plt.savefig(f'result/rtt_analysis_{self.nums}.png')  # 保存圖表為圖片
         plt.show()
 
         # print(f"平均往返時間: {average_rtt:.2f} ms")
 
 if __name__ == "__main__":
-    # parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser()
 
-    # # 添加參數
-    # parser.add_argument('--ip', type=str, help='Default server ip: 127.0.0.1', default="127.0.0.1")
-    # parser.add_argument('--port', type=int, help='Default server port: 14551', default=14551)
-    # parser.add_argument('--tout', type=float, help='Default watting TimeOut: 2.0', default=2.0)
-    # parser.add_argument('--nums', type=int, help='Default number of test: 200', default=200)
+    # 添加參數
+    parser.add_argument('--ip', type=str, help='Default server ip: 127.0.0.1', default="127.0.0.1")
+    parser.add_argument('--port', type=int, help='Default server port: 14551', default=14551)
+    parser.add_argument('--tout', type=float, help='Default watting TimeOut: 2.0', default=2.0)
+    parser.add_argument('--nums', type=int, help='Default number of test: 200', default=200)
 
-    # args = parser.parse_args()
+    args = parser.parse_args()
 
-    # client = Client(server_ip=args.ip, 
-    #                 server_port=args.port, 
-    #                 timeout=args.tout)
+    client = Client(server_ip=args.ip, 
+                    server_port=args.port, 
+                    timeout=args.tout)
 
-    # # 傳送資料
-    # client.send_data(nums=args.nums)
-
-    client = Client(server_ip="127.0.0.1",
-                    server_port=14551,
-                    timeout=2.0)
-    
     # 傳送資料
-    client.send_data(nums=200)
+    client.send_data(nums=args.nums)
 
     # 寫入csv file
     client.write_data()
