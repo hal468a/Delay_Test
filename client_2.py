@@ -195,21 +195,29 @@ class Client:
         # print(f"平均往返時間: {average_rtt:.2f} ms")
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
+    # parser = argparse.ArgumentParser()
 
-    # 添加參數
-    parser.add_argument('--ip', type=str, help='Default server ip: 127.0.0.1', default="127.0.0.1")
-    parser.add_argument('--port', type=int, help='Default server port: 14551', default=14551)
-    parser.add_argument('--tout', type=float, help='Default watting TimeOut: 2.0', default=2.0)
-    parser.add_argument('--nums', type=int, help='Default number of test: 200', default=200)
+    # # 添加參數
+    # parser.add_argument('--ip', type=str, help='Default server ip: 127.0.0.1', default="127.0.0.1")
+    # parser.add_argument('--port', type=int, help='Default server port: 14551', default=14551)
+    # parser.add_argument('--tout', type=float, help='Default watting TimeOut: 2.0', default=2.0)
+    # parser.add_argument('--nums', type=int, help='Default number of test: 200', default=200)
 
-    args = parser.parse_args()
+    # args = parser.parse_args()
 
-    client = Client(server_ip=args.ip, 
-                    server_port=args.port, 
-                    timeout=args.tout)
+    # client = Client(server_ip=args.ip, 
+    #                 server_port=args.port, 
+    #                 timeout=args.tout)
+
+    # # 傳送資料
+    # client.send_data(nums=args.nums)
+
+    client = Client(server_ip="127.0.0.1",
+                    server_port=14551,
+                    timeout=2.0)
+    
     # 傳送資料
-    client.send_data(nums=args.nums)
+    client.send_data(nums=200)
 
     # 寫入csv file
     client.write_data()
