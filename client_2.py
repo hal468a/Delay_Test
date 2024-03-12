@@ -81,6 +81,7 @@ class Client:
         
         try:
             for i in tqdm(range(self.nums), desc="進行測試"):
+                fall = 0
                 # 發送消息，附加序列號
                 message = f'msg{i}'.encode("utf-8")
                 json_bytes = json.dumps(self.data).encode("utf-8")
@@ -113,6 +114,8 @@ class Client:
 
                         # 檢查回應的消息是否匹配
                         if message == f'msg{i}':
+                            fall += 1
+                            print(f"失敗: {fall}")
                             break
                         time.sleep(0.5)
 
