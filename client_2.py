@@ -191,7 +191,8 @@ class Client:
         plt.plot(data['Test Number'], data['RTT (ms)'], label='RTT (ms)', marker='o')
         # plt.axhline(average_rtt, color='r', linestyle='--', label=f'平均RTT: {average_rtt:.2f} ms')
 
-        plt.title(f'一秒鐘內可以往返的封包數量: {packets_in_one_second}')
+        # plt.title(f'一秒鐘內可以往返的封包數量: {packets_in_one_second}')
+        plt.title(f"一秒鐘內可以傳送的封包數量: {packets_in_one_second}")
         plt.xlabel('測試編號')
         plt.ylabel('往返時間 (ms)')
         plt.legend()
