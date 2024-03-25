@@ -126,7 +126,7 @@ class Client:
                     continue
 
                 # 計算往返時間並保存
-                rtt = (receive_time - send_time) * 1000  # 轉換為毫秒
+                rtt = ((receive_time - send_time) * 1000) / 2 # 轉換為毫秒
                 self.rtt_data.append((i, rtt))
                 # print(f"接收到匹配的回應: {data.decode()}，RTT: {rtt:.3f} ms")
 
