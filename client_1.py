@@ -154,7 +154,7 @@ with open(file_name, 'w', newline='', encoding='utf_8_sig') as csvfile:
         writer.writerow([seq, rtt])
 
 # 讀取CSV檔案
-data = pd.read_csv('rtt_data.csv')
+data = pd.read_csv(file_name)
 
 # 計算平均RTT
 average_rtt = data['RTT (ms)'].mean()
