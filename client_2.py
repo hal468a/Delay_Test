@@ -115,13 +115,12 @@ class Client:
                         # 檢查回應的消息是否匹配
                         if message == f'msg{i}':
                             success += 1
-                            print(f"成功: {success}")
+                            
                             break
                         time.sleep(0.5)
-
                 except socket.timeout:
                     fail += 1
-                    print(f"超時失敗: {fail}")
+                    
                     print(f'消息 {i} 超時，未收到回應')
                     continue
 
