@@ -125,13 +125,14 @@ try:
             continue
 
         # 計算往返時間並保存
-        print(f"Success: {success}、Fail: {fail}")
+        
         rtt = (receive_time - send_time) * 1000  # 轉換為毫秒
         rtt_data.append((i, rtt))
         # print(f"接收到匹配的回應: {data.decode()}，RTT: {rtt:.3f} ms")
         print(f"接收到匹配的回應: {destination}，RTT: {rtt:.3f} ms")
 
 finally:
+    print(f"Success: {success}、Fail: {fail}")
     print('關閉socket')
     sock.close()
 
@@ -141,7 +142,6 @@ finally:
 #     writer.writerow(['封包序列號', 'RTT (ms)'])
 #     for seq, rtt in rtt_data:
 #         writer.writerow([seq, rtt])
-
 
 # 若 path result/ 不存在
 if not os.path.exists("test1_result"):
