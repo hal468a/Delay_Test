@@ -199,5 +199,5 @@ plt.legend()
 plt.grid(True)
 plt.text(10, average_rtt, f'平均延遲: {average_rtt:.3f}', fontsize=9)
 # 在保存前設置中文支持
-plt.savefig('rtt_chart.png', dpi=300)  # 保存圖表為PNG檔案
+plt.savefig('test1_result/rtt_chart.png', dpi=300)  # 保存圖表為PNG檔案
 plt.show()
