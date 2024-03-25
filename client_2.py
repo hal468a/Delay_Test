@@ -197,7 +197,7 @@ class Client:
         plt.legend()
         plt.grid(True)
 
-        plt.text(10, average_rtt, f'平均延遲: {average_rtt:.3f}', fontsize=10)
+        # plt.text(10, average_rtt, f'平均延遲: {average_rtt:.3f}', fontsize=10)
         plt.savefig(f'test2_result/rtt_analysis_{self.nums}.png')  # 保存圖表為圖片
         plt.show()
 
