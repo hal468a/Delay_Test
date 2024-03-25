@@ -80,7 +80,7 @@ class Client:
         self.nums = nums
         
         try:
-            fail = 0
+            success, fail = 0
             for i in tqdm(range(self.nums), desc="進行測試"):
                 # 發送消息，附加序列號
                 message = f'msg{i}'.encode("utf-8")
@@ -114,8 +114,8 @@ class Client:
 
                         # 檢查回應的消息是否匹配
                         if message == f'msg{i}':
-                            fail += 1
-                            print(f"匹配失敗: {fail}")
+                            success += 1
+                            print(f"成功: {success}")
                             break
                         time.sleep(0.5)
 
@@ -133,6 +133,8 @@ class Client:
         finally:
             print('關閉socket')
             self.udp.close()
+        print(f"Success: {success}、Fail: {fail}")
+        print(f"Success Rate: {(success / self.nums) * 100}%")
     
     def write_data(self):
 
