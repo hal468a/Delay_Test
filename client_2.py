@@ -138,10 +138,10 @@ class Client:
     def write_data(self):
 
         # 若 path result/ 不存在
-        if not os.path.exists("result"):
-            os.mkdir("result")
+        if not os.path.exists("test2_result"):
+            os.mkdir("test2_result")
 
-        self.file_name = f'result/rtt_data2_{self.nums}.csv'
+        self.file_name = f'test2_result/rtt_data_{self.nums}.csv'
         print(f"正在寫入 {self.file_name} ...")
 
         # 將RTT數據保存到CSV檔案，增加了描述性欄位

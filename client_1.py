@@ -140,10 +140,10 @@ finally:
 
 
 # 若 path result/ 不存在
-if not os.path.exists("result"):
-    os.mkdir("result")
+if not os.path.exists("test1_result"):
+    os.mkdir("test1_result")
 
-file_name = f'result/rtt_data1_{200}.csv'
+file_name = f'test1_result/rtt_data_{200}.csv'
 print(f"正在寫入 {file_name} ...")
 
 # 將RTT數據保存到CSV檔案，增加了描述性欄位
