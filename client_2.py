@@ -80,7 +80,7 @@ class Client:
         self.nums = nums
         
         try:
-            success, fail = 0
+            success, fail = 0, 0
             for i in tqdm(range(self.nums), desc="進行測試"):
                 # 發送消息，附加序列號
                 message = f'msg{i}'.encode("utf-8")
