@@ -131,8 +131,23 @@ finally:
     print('關閉socket')
     sock.close()
 
+# # 將RTT數據保存到CSV檔案，增加了描述性欄位
+# with open('rtt_data.csv', 'w', newline='', encoding='utf_8_sig') as csvfile:
+#     writer = csv.writer(csvfile)
+#     writer.writerow(['封包序列號', 'RTT (ms)'])
+#     for seq, rtt in rtt_data:
+#         writer.writerow([seq, rtt])
+
+
+# 若 path result/ 不存在
+if not os.path.exists("result"):
+    os.mkdir("result")
+
+file_name = f'result/rtt_data1_{200}.csv'
+print(f"正在寫入 {file_name} ...")
+
 # 將RTT數據保存到CSV檔案，增加了描述性欄位
-with open('rtt_data.csv', 'w', newline='', encoding='utf_8_sig') as csvfile:
+with open(file_name, 'w', newline='', encoding='utf_8_sig') as csvfile:
     writer = csv.writer(csvfile)
     writer.writerow(['封包序列號', 'RTT (ms)'])
     for seq, rtt in rtt_data:
@@ -165,7 +180,7 @@ project_folder = os.path.dirname(os.path.abspath(__file__))
 # 設置中文支持的字體
 font_path = os.path.join(project_folder, 'MicrosoftYaHei.ttf')
 custom_font = FontProperties(fname=font_path)
-mpl.rcParams['font.sans-serif'] = ['Microsoft YaHei']  # 使用微软雅黑
+mpl.rcParams['font.sans-serif'] = ['Microsoft YaHei']  # 使用微軟雅黑體
 mpl.rcParams['axes.unicode_minus'] = False
 
 plt.figure(figsize=(10, 6))
