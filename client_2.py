@@ -173,7 +173,8 @@ class Client:
             if total_time_ms > 1000:
                 break
             packets_in_one_second += 1
-        print(f"一秒鐘內可以往返的封包數量: {packets_in_one_second}")
+        # print(f"一秒鐘內可以往返的封包數量: {packets_in_one_second}")
+        print(f"一秒鐘內可以傳送的封包數量: {packets_in_one_second}")
 
         # 繪製RTT圖表
         # 獲取專案資料夾路徑
