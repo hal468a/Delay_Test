@@ -22,6 +22,7 @@ sock.settimeout(2.0)  # 設置超時時間，確保如果數據丟失，不會�
 rtt_data = []
 
 try:
+    success, fail = 0, 0
     for i in range(200):
         # 發送消息，附加序列號
         message = f'msg{i}'.encode()
@@ -115,16 +116,19 @@ try:
                 #print(destination)
                 if destination == f'msg{i}':
                     # print("符合")
+                    success += 1
                     break
                 time.sleep(0.5)
         except socket.timeout:
+            fail += 1
             print(f'消息 {i} 超時，未收到回應')
             continue
 
         # 計算往返時間並保存
+        print(f"Success: {success}、Fail: {fail}")
         rtt = (receive_time - send_time) * 1000  # 轉換為毫秒
         rtt_data.append((i, rtt))
-        #print(f"接收到匹配的回應: {data.decode()}，RTT: {rtt:.3f} ms")
+        # print(f"接收到匹配的回應: {data.decode()}，RTT: {rtt:.3f} ms")
         print(f"接收到匹配的回應: {destination}，RTT: {rtt:.3f} ms")
 
 finally:
