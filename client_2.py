@@ -80,8 +80,8 @@ class Client:
         self.nums = nums
         
         try:
+            fail = 0
             for i in tqdm(range(self.nums), desc="進行測試"):
-                fall = 0
                 # 發送消息，附加序列號
                 message = f'msg{i}'.encode("utf-8")
                 json_bytes = json.dumps(self.data).encode("utf-8")
@@ -114,12 +114,14 @@ class Client:
 
                         # 檢查回應的消息是否匹配
                         if message == f'msg{i}':
-                            fall += 1
-                            print(f"失敗: {fall}")
+                            fail += 1
+                            print(f"匹配失敗: {fail}")
                             break
                         time.sleep(0.5)
 
                 except socket.timeout:
+                    fail += 1
+                    print(f"超時失敗: {fail}")
                     print(f'消息 {i} 超時，未收到回應')
                     continue
 
